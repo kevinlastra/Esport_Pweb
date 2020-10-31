@@ -1,0 +1,34 @@
+//dot -Tps DB_graph.dot -o graph.ps
+//evince graph.ps
+
+digraph
+{
+    edge[fontcolor = red]
+
+    evenement[shape=box];
+    EPE[shape=box];
+    equipe[shape=box];
+    joueur[shape=box];
+    tournois[shape=box];
+    typetournois[shape=box];
+    typejeux[shape=box];
+    
+    organisateur[shape=box];
+    org_p[shape=box];
+    org_m[shape=box];
+    heritage[shape=triangle, label=""];
+
+    evenement -> EPE [headlabel = "n" taillabel = "1"];
+    EPE -> equipe [headlabel = "1" taillabel = "n"];
+    equipe -> joueur [headlabel = "n" taillabel = "1"];
+
+    evenement -> tournois [headlabel = "n" taillabel = "1"];
+    tournois -> typetournois [headlabel = "1" taillabel = "n"];
+
+    evenement -> typejeux [headlabel = "1" taillabel = "n"];
+
+    evenement -> organisateur [headlabel = "1" taillabel = "1"];
+    organisateur -> heritage;
+    heritage->org_p;
+    heritage->org_m;
+}
