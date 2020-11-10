@@ -27,6 +27,7 @@ joueur(id_j, id_team, nom, prenom, niveau)
 organisateur(id_o , ...)
 //cle primaire: id_o
 
-org_physique(id_o, nom, prenom, ...)
-org_morale(id_o, nom, .....)
+org_physique(id_o, nom, prenom)
+org_morale(id_o, nom, raison_s, siege_s)
 //cle primaire et cle etrangere: id_o
+//s:social
