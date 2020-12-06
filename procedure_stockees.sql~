@@ -1,0 +1,7 @@
+CREATE PROCEDURE stats_event(IN event_id INT)
+BEGIN
+	SELECT ev.nom, o.nom, COUNT(e.id_equipe)
+	FROM evenement ev, organisateur o, equipe e, tournoi t, participation p
+	WHERE t.id_e = event_id AND ev.id_o = o.id_o AND p.id_t = t.id_t AND p.id_equipe = e.id_e
+	GROUP BY ev.id_e, o.id_o;
+END | DELIMITER;
