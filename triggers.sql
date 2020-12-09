@@ -1,8 +1,9 @@
 DROP TRIGGER IF EXISTS update_organisateur_last_date;
+DROP TRIGGER IF EXISTS update_organisateur_last_date2;
 DROP TRIGGER IF EXISTS delete_organisateur;
 
 DELIMITER |
-CREATE TRIGGER update_organisateur_last_date BEFORE INSERT ON evenement
+CREATE TRIGGER update_organisateur_last_date AFTER INSERT ON evenement
 FOR EACH ROW
 BEGIN
 	UPDATE organisateur
@@ -10,15 +11,11 @@ BEGIN
 	WHERE id_o = NEW.id_o;
 END;
 |
-CREATE TRIGGER delete_organisateur BEFORE INSERT ON organisateur
+CREATE TRIGGER delete_organisateur BEFORE DELETE ON organisateur
 FOR EACH ROW
-BEGIN
+BEGIN	
 	UPDATE evenement SET id_o = 1
-	WHERE id_o = (SELECT o.id_o FROM organisateur
-		      WHERE dernier_event_cree < DATE_SUB(NOW(), INTERVAL 2 YEAR));
-		      
-	DELETE FROM organisateur
-	WHERE dernier_event_cree < DATE_SUB(NOW(), INTERVAL 2 YEAR);
+		WHERE id_o = OLD.id_o;
 END;
 |
 DELIMITER ;
