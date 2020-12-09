@@ -125,12 +125,6 @@ CREATE TABLE `typetournoi` (
   `niveau` int(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE `toDeleteOrganisateur`(
-       `id_o` int(3) NOT NULL
-);
-ALTER TABLE `toDeleteOrganisateur`
-  ADD PRIMARY KEY (`id_o`);
 --
 -- Indexes for dumped tables
 --
