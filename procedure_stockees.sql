@@ -15,6 +15,7 @@ BEGIN
 	FROM evenement e, tournoi t, organisateur o
 	WHERE e.id_e = event_id AND e.id_o = o.id_o AND t.id_e = event_id
 	GROUP BY e.id_e;
+	
 	SELECT t.id_t, COUNT(e.id_equipe)
 	FROM equipe e, tournoi t, participation p
 	WHERE t.id_e = event_id AND p.id_t = t.id_t AND p.id_equipe = e.id_equipe

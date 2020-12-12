@@ -1,5 +1,4 @@
 DROP TRIGGER IF EXISTS update_organisateur_last_date;
-DROP TRIGGER IF EXISTS update_organisateur_last_date2;
 DROP TRIGGER IF EXISTS delete_organisateur;
 
 DELIMITER |

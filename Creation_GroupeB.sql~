@@ -1,4 +1,14 @@
+/*
+Fichier : Creation_GroupB.sql
+Auteurs:
+	Benjamin Baska  21503576
+	Kevin Lastra    21706783
+Nom du groupe : B
+*/
 
+DROP DATABASE IF EXISTS esport;
+CREATE DATABASE esport;
+USE esport;
 
 SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `equipe`;
@@ -15,17 +25,7 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `esport`
---
-
--- --------------------------------------------------------
+------CREATION DES TABLES---------------------------------
 
 --
 -- Table structure for table `equipe`
@@ -117,10 +117,6 @@ CREATE TABLE `typetournoi` (
   `type` varchar(20) NOT NULL,
   `niveau` int(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `equipe`
@@ -239,16 +235,73 @@ ALTER TABLE `tournoi`
   ADD CONSTRAINT `tournoi_ibfk_1` FOREIGN KEY (`id_tt`) REFERENCES `typetournoi` (`id_tt`),
   ADD CONSTRAINT `tournoi_ibfk_2` FOREIGN KEY (`id_e`) REFERENCES `evenement` (`id_e`);
 
-INSERT INTO organisateur VALUES (1,'root','root', NULL);
 
-source procedure_stockees.sql;
-source triggers.sql;
+------Affichage des tuples---------------
+SELECT * FROM evenement;
+SELECT * FROM organisateur;
+SELECT * FROM tournoi;
+SELECT * FROM typetournoi;
+SELECT * FROM participation;
+SELECT * FROM equipe;
+SELECT * FROM joueur;
+
+
+------INSERTION--------------------------
+------Organisateur par default-----------
+INSERT INTO organisateur VALUES (1,'root','root', NULL);
+-----------------------------------------
+------Procedures-------------------------
+
+DROP procedure IF EXISTS event_par_org;
+DROP procedure IF EXISTS stats_event;
+
+DELIMITER |
+CREATE PROCEDURE event_par_org (IN org_id INT)
+BEGIN
+	SELECT e.id_e, e.nom
+	FROM evenement e
+	WHERE e.id_o = org_id;
+END |
+
+CREATE PROCEDURE stats_event(IN event_id INT)
+BEGIN
+	SELECT e.id_e, e.nom, e.id_o, o.nom, COUNT(t.id_t)
+	FROM evenement e, tournoi t, organisateur o
+	WHERE e.id_e = event_id AND e.id_o = o.id_o AND t.id_e = event_id
+	GROUP BY e.id_e;
+	
+	SELECT t.id_t, COUNT(e.id_equipe)
+	FROM equipe e, tournoi t, participation p
+	WHERE t.id_e = event_id AND p.id_t = t.id_t AND p.id_equipe = e.id_equipe
+	GROUP BY t.id_t;
+END | 
+
+DELIMITER ;
+
+------Triggers---------------------------
+
+DROP TRIGGER IF EXISTS update_organisateur_last_date;
+DROP TRIGGER IF EXISTS update_organisateur_last_date2;
+DROP TRIGGER IF EXISTS delete_organisateur;
+
+DELIMITER |
+CREATE TRIGGER update_organisateur_last_date AFTER INSERT ON evenement
+FOR EACH ROW
+BEGIN
+	UPDATE organisateur
+	SET dernier_event_cree = CURDATE()
+	WHERE id_o = NEW.id_o;
+END;
+|
+CREATE TRIGGER delete_organisateur BEFORE DELETE ON organisateur
+FOR EACH ROW
+BEGIN	
+	UPDATE evenement SET id_o = 1
+		WHERE id_o = OLD.id_o;
+END;
+|
+DELIMITER ;
+
 
 COMMIT;
-
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
 
